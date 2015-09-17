@@ -80,7 +80,7 @@ var Engine = (function(global) {
      */
     function update(dt) {
         updateEntities(dt);
-        // checkCollisions();
+        checkCollisions();
     }
 
     /* This is called by the update function  and loops through all of the
@@ -96,6 +96,18 @@ var Engine = (function(global) {
         });
         player.update();
     }
+
+    function checkCollisions() {
+      allEnemies.forEach(function (enemy){
+        if (player.x <= (enemy.x + 50) && enemy.x <= (player.x + 50) && player.y <= (enemy.y + 50) && enemy.y <= (player.y + 50)){
+          player.hit();
+        }
+        if (player.lives < 1){
+          reset();
+        }
+      })
+    }
+
 
     /* This function initially draws the "game level", it will then call
      * the renderEntities function. Remember, this function is called every
@@ -138,7 +150,16 @@ var Engine = (function(global) {
 
 
         renderEntities();
+
+        ctx.fillStyle = 'rgb(250, 250, 250)';
+        ctx.font = "24px Helvetica";
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'bottom';
+        ctx.fillText('Lives: ' + player.lives, 10, 580);
+        ctx.fillText('High Score: ' + highScore, 180, 580);
+        ctx.fillText('Score: ' + score, 390, 580);
     }
+
 
     /* This function is called by the render function and is called on each game
      * tick. It's purpose is to then call the render functions you have defined
@@ -160,7 +181,8 @@ var Engine = (function(global) {
      * those sorts of things. It's only called once by the init() method.
      */
     function reset() {
-        // noop
+        player.respawn();
+        score = 0;
     }
 
     /* Go ahead and load all of the images we know we're going to need to
